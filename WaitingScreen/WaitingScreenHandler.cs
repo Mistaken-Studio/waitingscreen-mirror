@@ -12,6 +12,7 @@ using Exiled.API.Features;
 using MEC;
 using Mistaken.API;
 using Mistaken.API.Diagnostics;
+using Mistaken.API.Extensions;
 using UnityEngine;
 
 namespace Mistaken.WaitingScreen
@@ -107,12 +108,19 @@ namespace Mistaken.WaitingScreen
                     timeMessage = "Runda <color=yellow>rozpoczęta</color>";
                 else if (GameCore.RoundStart.singleton.NetworkTimer == -2)
                     timeMessage = "Lobby <b><color=red>zablokowane</color></b>";
+
+                foreach (var player in RealPlayers.List)
+                    player.SetGUI("waiting_screen", API.GUI.PseudoGUIPosition.TOP, timeMessage);
+
                 var playersMessage = $"<color=yellow>{players}</color> gracz{(players == 1 ? string.Empty : "y")} połączony{(players == 1 ? string.Empty : "ch")}";
                 Intercom.host.CustomContent = $"<color=white>{timeMessage} <size=200%><b><color=orange>Mistaken</color></b></size> <color=#00000000>|</color>                 {playersMessage}                <color=#00000000>|</color> <size=25%><color=#CCC9>Nieznajomość regulaminu nie zwalnia z przestrzegania go</color></size></color>";
                 yield return Timing.WaitForSeconds(0.5f);
             }
 
             Intercom.host.CustomContent = null;
+
+            foreach (var player in RealPlayers.List)
+                player.SetGUI("waiting_screen", API.GUI.PseudoGUIPosition.TOP, null);
         }
     }
 }

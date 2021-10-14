@@ -26,7 +26,7 @@ namespace Mistaken.WaitingScreen
         public override PluginPriority Priority => PluginPriority.Default;
 
         /// <inheritdoc/>
-        public override Version RequiredExiledVersion => new Version(3, 0, 0);
+        public override Version RequiredExiledVersion => new Version(3, 0, 3);
 
         /// <inheritdoc/>
         public override void OnEnabled()
