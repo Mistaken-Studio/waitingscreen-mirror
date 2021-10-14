@@ -80,6 +80,7 @@ namespace Mistaken.WaitingScreen
                 this.CallDelayed(.5f, () =>
                 {
                     ev.Player.SetRole(RoleType.Tutorial);
+                    ev.Player.ClearInventory();
                     this.CallDelayed(.5f, () => ev.Player.Position = this.startPos);
                 });
             }
@@ -110,17 +111,23 @@ namespace Mistaken.WaitingScreen
                     timeMessage = "Lobby <b><color=red>zablokowane</color></b>";
 
                 foreach (var player in RealPlayers.List)
+                {
                     player.SetGUI("waiting_screen", API.GUI.PseudoGUIPosition.TOP, timeMessage);
+                    player.IsInvisible = true;
+                }
 
                 var playersMessage = $"<color=yellow>{players}</color> gracz{(players == 1 ? string.Empty : "y")} połączony{(players == 1 ? string.Empty : "ch")}";
-                Intercom.host.CustomContent = $"<color=white>{timeMessage} <size=200%><b><color=orange>Mistaken</color></b></size> <color=#00000000>|</color>                 {playersMessage}                <color=#00000000>|</color> <size=25%><color=#CCC9>Nieznajomość regulaminu nie zwalnia z przestrzegania go</color></size></color>";
+                Intercom.host.CustomContent = $"<color=white>{timeMessage} <size=200%><b><color=orange>Mistaken</color></b></size> <color=#00000000>|</color>               {playersMessage}                <color=#00000000>|</color> <size=25%><color=#CCC9>Nieznajomość regulaminu nie zwalnia z przestrzegania go</color></size></color>";
                 yield return Timing.WaitForSeconds(0.5f);
             }
 
             Intercom.host.CustomContent = null;
 
             foreach (var player in RealPlayers.List)
+            {
                 player.SetGUI("waiting_screen", API.GUI.PseudoGUIPosition.TOP, null);
+                player.IsInvisible = false;
+            }
         }
     }
 }
