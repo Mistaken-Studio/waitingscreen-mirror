@@ -127,6 +127,8 @@ namespace Mistaken.WaitingScreen
             {
                 player.SetGUI("waiting_screen", API.GUI.PseudoGUIPosition.TOP, null);
                 player.IsInvisible = false;
+                if (player.Role == RoleType.Tutorial)
+                    player.SetRole(RoleType.None, SpawnReason.None);
             }
         }
     }
