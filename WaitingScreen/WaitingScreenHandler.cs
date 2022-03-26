@@ -30,18 +30,16 @@ namespace Mistaken.WaitingScreen
 
         public override void OnEnable()
         {
-            Exiled.Events.Handlers.Player.Verified += this.Player_Verified;
-            Exiled.Events.Handlers.Server.WaitingForPlayers += this.Server_WaitingForPlayers;
             Exiled.Events.Handlers.Server.RoundStarted += this.Server_RoundStarted;
             Exiled.Events.Handlers.Player.IntercomSpeaking += this.Player_IntercomSpeaking;
+            Events.Handlers.CustomEvents.GeneratedCache += this.CustomEvents_GeneratedCache;
         }
 
         public override void OnDisable()
         {
-            Exiled.Events.Handlers.Player.Verified -= this.Player_Verified;
-            Exiled.Events.Handlers.Server.WaitingForPlayers -= this.Server_WaitingForPlayers;
             Exiled.Events.Handlers.Server.RoundStarted -= this.Server_RoundStarted;
             Exiled.Events.Handlers.Player.IntercomSpeaking -= this.Player_IntercomSpeaking;
+            Events.Handlers.CustomEvents.GeneratedCache -= this.CustomEvents_GeneratedCache;
         }
 
         private Vector3 startPos;
@@ -57,7 +55,7 @@ namespace Mistaken.WaitingScreen
             this.CallDelayed(10, () => ReferenceHub.HostHub.GetComponent<Intercom>().CustomContent = null, "ClearIntercom");
         }
 
-        private void Server_WaitingForPlayers()
+        private void CustomEvents_GeneratedCache()
         {
             var startRound = GameObject.Find("StartRound");
             if (startRound == null)
@@ -71,19 +69,7 @@ namespace Mistaken.WaitingScreen
             this.startPos = intercomDoor.position + (intercomDoor.forward * -8) + (Vector3.down * 6) + (intercomDoor.right * 3);
 
             this.RunCoroutine(this.WaitingForPlayers(), "WaitingForPlayers");
-        }
-
-        private void Player_Verified(Exiled.Events.EventArgs.VerifiedEventArgs ev)
-        {
-            if (!Round.IsStarted)
-            {
-                this.CallDelayed(.5f, () =>
-                {
-                    ev.Player.SetRole(RoleType.Tutorial);
-                    ev.Player.ClearInventory();
-                    this.CallDelayed(.5f, () => ev.Player.Position = this.startPos);
-                });
-            }
+            this.RunCoroutine(this.UpdatePlayers(), "UpdatePlayers");
         }
 
         private IEnumerator<float> WaitingForPlayers()
@@ -129,6 +115,27 @@ namespace Mistaken.WaitingScreen
                 player.IsInvisible = false;
                 if (player.Role == RoleType.Tutorial)
                     player.SetRole(RoleType.None, SpawnReason.None);
+            }
+        }
+
+        private IEnumerator<float> UpdatePlayers()
+        {
+            while (!Round.IsStarted)
+            {
+                if (GameCore.RoundStart.singleton.NetworkTimer <= 2 && GameCore.RoundStart.singleton.NetworkTimer != -2)
+                    yield break;
+                foreach (var player in RealPlayers.List)
+                {
+                    if (!player.IsConnected)
+                        continue;
+                    if (player.Role.Type == RoleType.Tutorial)
+                        continue;
+                    player.SetRole(RoleType.Tutorial);
+                    player.ClearInventory();
+                    this.CallDelayed(.5f, () => player.Position = this.startPos);
+                }
+
+                yield return Timing.WaitForSeconds(0.5f);
             }
         }
     }
