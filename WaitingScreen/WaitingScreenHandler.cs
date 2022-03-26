@@ -67,7 +67,7 @@ namespace Mistaken.WaitingScreen
             }
 
             startRound.transform.localScale = Vector3.zero;
-            var intercomDoor = Map.Doors.First(d => d.Type == DoorType.Intercom)?.Base.transform;
+            var intercomDoor = Door.List.First(d => d.Type == DoorType.Intercom)?.Base.transform;
             this.startPos = intercomDoor.position + (intercomDoor.forward * -8) + (Vector3.down * 6) + (intercomDoor.right * 3);
 
             this.RunCoroutine(this.WaitingForPlayers(), "WaitingForPlayers");
