@@ -31,15 +31,15 @@ namespace Mistaken.WaitingScreen
         public override void OnEnable()
         {
             Exiled.Events.Handlers.Server.RoundStarted += this.Server_RoundStarted;
+            Exiled.Events.Handlers.Server.WaitingForPlayers += this.Server_WaitingForPlayers;
             Exiled.Events.Handlers.Player.IntercomSpeaking += this.Player_IntercomSpeaking;
-            Events.Handlers.CustomEvents.GeneratedCache += this.CustomEvents_GeneratedCache;
         }
 
         public override void OnDisable()
         {
             Exiled.Events.Handlers.Server.RoundStarted -= this.Server_RoundStarted;
+            Exiled.Events.Handlers.Server.WaitingForPlayers -= this.Server_WaitingForPlayers;
             Exiled.Events.Handlers.Player.IntercomSpeaking -= this.Player_IntercomSpeaking;
-            Events.Handlers.CustomEvents.GeneratedCache -= this.CustomEvents_GeneratedCache;
         }
 
         private Vector3 startPos;
@@ -55,7 +55,7 @@ namespace Mistaken.WaitingScreen
             this.CallDelayed(10, () => ReferenceHub.HostHub.GetComponent<Intercom>().CustomContent = null, "ClearIntercom");
         }
 
-        private void CustomEvents_GeneratedCache()
+        private void Server_WaitingForPlayers()
         {
             var startRound = GameObject.Find("StartRound");
             if (startRound == null)
