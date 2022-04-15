@@ -75,13 +75,13 @@ namespace Mistaken.WaitingScreen
 
         private void Player_Verified(Exiled.Events.EventArgs.VerifiedEventArgs ev)
         {
-            if (!Round.IsStarted && GameCore.RoundStart.singleton.NetworkTimer > 2)
+            if (!Round.IsStarted && (GameCore.RoundStart.singleton.NetworkTimer > 2 || GameCore.RoundStart.singleton.NetworkTimer == -2))
             {
-                this.CallDelayed(.5f, () =>
+                this.CallDelayed(0.5f, () =>
                 {
                     ev.Player.SetRole(RoleType.Tutorial);
                     ev.Player.ClearInventory();
-                    this.CallDelayed(.5f, () => ev.Player.Position = this.startPos);
+                    this.CallDelayed(0.5f, () => ev.Player.Position = this.startPos);
                 });
             }
         }
