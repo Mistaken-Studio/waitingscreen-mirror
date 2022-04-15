@@ -75,7 +75,7 @@ namespace Mistaken.WaitingScreen
 
         private void Player_Verified(Exiled.Events.EventArgs.VerifiedEventArgs ev)
         {
-            if (!Round.IsStarted && (GameCore.RoundStart.singleton.NetworkTimer > 2 || GameCore.RoundStart.singleton.NetworkTimer == -2))
+            if (!Round.IsStarted && (GameCore.RoundStart.singleton.NetworkTimer >= 2 || GameCore.RoundStart.singleton.NetworkTimer == -2))
             {
                 this.CallDelayed(0.5f, () =>
                 {
